@@ -27,6 +27,12 @@ dependencies:
 - persistent-sqlite
 - persistent-template
 - monad-logger
+- text
+- time
+- mtl
+- transformers
+- aeson
+- directory
 
 ghc-options:
 - -Wall
@@ -53,11 +59,17 @@ executables:
     dependencies:
     - shorty
     - scotty
-    - lucid
+    - text
+    - time
+    - mtl
+    - transformers
+    - aeson
     - persistent
     - persistent-sqlite
     - persistent-template
     - monad-logger
+    - lucid
+    - directory
 
 tests:
   shorty-test:

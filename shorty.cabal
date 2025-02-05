@@ -25,7 +25,9 @@ source-repository head
 
 library
   exposed-modules:
+      Database
       Lib
+      Models
   other-modules:
       Paths_shorty
   autogen-modules:
@@ -34,13 +36,19 @@ library
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
+    , directory
     , lucid
     , monad-logger
+    , mtl
     , persistent
     , persistent-sqlite
     , persistent-template
     , scotty
+    , text
+    , time
+    , transformers
   default-language: Haskell2010
 
 executable shorty-exe
@@ -53,14 +61,20 @@ executable shorty-exe
       app
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
+    , directory
     , lucid
     , monad-logger
+    , mtl
     , persistent
     , persistent-sqlite
     , persistent-template
     , scotty
     , shorty
+    , text
+    , time
+    , transformers
   default-language: Haskell2010
 
 test-suite shorty-test
@@ -74,12 +88,18 @@ test-suite shorty-test
       test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
+    , directory
     , lucid
     , monad-logger
+    , mtl
     , persistent
     , persistent-sqlite
     , persistent-template
     , scotty
     , shorty
+    , text
+    , time
+    , transformers
   default-language: Haskell2010
