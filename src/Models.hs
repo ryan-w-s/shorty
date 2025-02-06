@@ -32,10 +32,8 @@ import Data.Time (UTCTime)
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
 Url
     originalUrl String
-    shortCode String
     createdAt UTCTime
     clicks Int default=0
-    UniqueShortCode shortCode
     UniqueOriginalUrl originalUrl
     deriving Show
 |] 
