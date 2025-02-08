@@ -81,3 +81,12 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - shorty
+    - hspec
+    - QuickCheck
+    - directory
+    - persistent
+    - persistent-sqlite
+    - text
+    - time
+    - monad-logger
+    - sqlite-simple

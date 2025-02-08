@@ -27,7 +27,7 @@ data UrlInfo = UrlInfo
     , shortCode :: String   -- base62 representation of the id
     , createdAt :: UTCTime
     , clicks :: Int
-    } deriving (Show)
+    } deriving (Show, Eq)
 
 -- | Convert a database Url to UrlInfo
 toUrlInfo :: Entity Url -> UrlInfo
@@ -66,7 +66,7 @@ getAllUrls = do
 
 -- Base62 conversion helpers
 base62Chars :: String
-base62Chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+base62Chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 -- | Convert an Integer to base62 string
 toBase62 :: Integer -> String
@@ -82,6 +82,6 @@ fromBase62 = fmap (foldl (\acc x -> acc * 62 + x) 0) . mapM charToValue
   where
     charToValue c
         | c >= '0' && c <= '9' = Just $ fromIntegral $ ord c - ord '0'
-        | c >= 'A' && c <= 'Z' = Just $ fromIntegral $ ord c - ord 'A' + 10
-        | c >= 'a' && c <= 'z' = Just $ fromIntegral $ ord c - ord 'a' + 36
+        | c >= 'a' && c <= 'z' = Just $ fromIntegral $ ord c - ord 'a' + 10
+        | c >= 'A' && c <= 'Z' = Just $ fromIntegral $ ord c - ord 'A' + 36
         | otherwise = Nothing 
