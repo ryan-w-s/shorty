@@ -1,6 +1,16 @@
 module Lib
-    ( initDB
+    ( -- * Database
+      initDB
     , runDB
+    -- * URL Operations
+    , createUrl
+    , getUrlById
+    , getAllUrls
+    , UrlInfo(..)
+    -- * Base62 Conversion
+    , toBase62
+    , fromBase62
+    -- * Generated Types
     , Url(..)
     , UrlId
     , EntityField(..)
@@ -11,3 +21,4 @@ module Lib
 
 import Models
 import Database
+import Actions
