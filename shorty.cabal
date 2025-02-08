@@ -9,9 +9,9 @@ version:        0.1.0.0
 description:    Please see the README on GitHub at <https://github.com/githubuser/shorty#readme>
 homepage:       https://github.com/githubuser/shorty#readme
 bug-reports:    https://github.com/githubuser/shorty/issues
-author:         Author name here
+author:         Ryan Stolliker
 maintainer:     example@example.com
-copyright:      2025 Author name here
+copyright:      2025 Ryan Stolliker
 license:        BSD-3-Clause
 license-file:   LICENSE
 build-type:     Simple
