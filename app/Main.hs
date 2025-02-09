@@ -1,14 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Main (main) where
 
 import Lib (initDB, createUrl, UrlInfo(..))
 import Web.Scotty
 import Data.Text.Lazy (Text)
-import qualified Data.Text.Lazy as TL
 import qualified Data.Text as T
 import Lucid
-import Data.Monoid (mconcat)
+import Control.Exception (try, SomeException)
 
 -- | CSS styles for the application
 pageStyle :: T.Text
@@ -37,6 +37,12 @@ newUrlForm = template "Create New URL Shortcut" $ do
         input_ [type_ "url", name_ "url", placeholder_ "Enter URL to shorten", required_ "required"]
         input_ [type_ "submit", value_ "Create Shortcut"]
 
+-- | Error page
+errorPage :: Text -> Html ()
+errorPage msg = template "Error" $ do
+    h1_ "Error"
+    p_ $ toHtml msg
+
 -- | Success page after creating a shortcut
 shortcutCreated :: UrlInfo -> Html ()
 shortcutCreated info = template "Shortcut Created" $ do
@@ -49,23 +55,31 @@ shortcutCreated info = template "Shortcut Created" $ do
         let shortUrl = T.pack $ "/go/" <> shortCode info
         a_ [href_ shortUrl] $ toHtml $ T.unpack shortUrl
 
+-- | Application routes
+routes :: ScottyM ()
+routes = do
+    -- Show homepage
+    get "/" $ do
+        text ("URL Shortener Service" :: Text)
+
+    -- Show form for creating new shortcuts
+    get "/new" $ do
+        html $ renderText newUrlForm
+
+    -- Handle form submission
+    post "/new" $ do
+        url <- formParam "url"
+        result <- liftAndCatchIO $ try $ createUrl url
+        case result of
+            Left (_ :: SomeException) -> 
+                html $ renderText $ errorPage "Invalid URL or database error"
+            Right urlInfo -> 
+                html $ renderText $ shortcutCreated urlInfo
+
 main :: IO ()
 main = do
     -- Initialize the database
     initDB
     
     -- Start the web server
-    scotty 3000 $ do
-        -- Show homepage
-        get "/" $ do
-            text ("URL Shortener Service" :: Text)
-
-        -- Show form for creating new shortcuts
-        get "/new" $ do
-            html $ renderText newUrlForm
-
-        -- Handle form submission
-        post "/new" $ do
-            url <- param "url"
-            result <- liftAndCatchIO $ createUrl url
-            html $ renderText $ shortcutCreated result
+    scotty 3000 routes
