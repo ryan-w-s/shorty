@@ -5,6 +5,7 @@ module View
     , newUrlForm
     , errorPage
     , shortcutCreated
+    , urlMetadata
     ) where
 
 import qualified Data.Text as T
@@ -55,4 +56,30 @@ shortcutCreated info = template "Shortcut Created" $ do
     p_ $ do
         "Shortcut: "
         let shortUrl = T.pack $ "/go/" <> shortCode info
-        a_ [href_ shortUrl] $ toHtml $ T.unpack shortUrl 
+        a_ [href_ shortUrl] $ toHtml $ T.unpack shortUrl
+    p_ $ do
+        "View metadata: "
+        let metadataUrl = T.pack $ "/get/" <> shortCode info
+        a_ [href_ metadataUrl] "View statistics and details"
+
+-- | Display URL metadata
+urlMetadata :: UrlInfo -> Html ()
+urlMetadata info = template "URL Information" $ do
+    h1_ "URL Information"
+    div_ [class_ "metadata"] $ do
+        p_ $ do
+            strong_ "Original URL: "
+            a_ [href_ $ T.pack $ originalUrl info] $ toHtml $ originalUrl info
+        p_ $ do
+            strong_ "Shortcode: "
+            code_ $ toHtml $ shortCode info
+        p_ $ do
+            strong_ "Created: "
+            toHtml $ show $ createdAt info
+        p_ $ do
+            strong_ "Times clicked: "
+            toHtml $ show $ clicks info
+        p_ $ do
+            strong_ "Go to URL: "
+            let goUrl = T.pack $ "/go/" <> shortCode info
+            a_ [href_ goUrl] $ toHtml $ T.unpack goUrl 
