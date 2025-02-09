@@ -29,6 +29,8 @@ library
       Database
       Lib
       Models
+      Server
+      View
   other-modules:
       Paths_shorty
   autogen-modules:
