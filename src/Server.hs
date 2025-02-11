@@ -6,19 +6,19 @@ module Server
     ) where
 
 import Web.Scotty
-import Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as TL
 import Control.Exception (try, SomeException)
 import Lucid (renderText)
-import Lib (createUrl, getUrlById, fromBase62, incrementClicks, UrlInfo(..))
-import View (newUrlForm, errorPage, shortcutCreated, urlMetadata)
+import Lib (createUrl, getUrlById, fromBase62, incrementClicks, getAllUrls, UrlInfo(..))
+import View (newUrlForm, errorPage, shortcutCreated, urlMetadata, homePage)
 
 -- | Application routes
 routes :: ScottyM ()
 routes = do
     -- Show homepage
     get "/" $ do
-        text ("URL Shortener Service" :: Text)
+        urls <- liftAndCatchIO getAllUrls
+        html $ renderText $ homePage urls
 
     -- Show form for creating new shortcuts
     get "/new" $ do

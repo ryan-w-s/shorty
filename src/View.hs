@@ -6,12 +6,14 @@ module View
     , errorPage
     , shortcutCreated
     , urlMetadata
+    , homePage
     ) where
 
 import qualified Data.Text as T
 import Data.Text.Lazy (Text)
 import Lucid
 import Lib (UrlInfo(..))
+import qualified Data.Foldable as F
 
 -- | CSS styles for the application
 pageStyle :: T.Text
@@ -22,6 +24,11 @@ pageStyle = mconcat
     , "input[type=submit] { padding: 0.5em 1em; cursor: pointer; }"
     , "a { color: #0066cc; text-decoration: none; }"
     , "a:hover { text-decoration: underline; }"
+    , ".url-list { list-style: none; padding: 0; }"
+    , ".url-item { border-bottom: 1px solid #eee; padding: 1em 0; }"
+    , ".url-stats { color: #666; font-size: 0.9em; margin-top: 0.5em; }"
+    , ".create-new { display: inline-block; margin: 1em 0; padding: 0.5em 1em; background: #0066cc; color: white; border-radius: 4px; }"
+    , ".create-new:hover { background: #0052a3; text-decoration: none; }"
     ]
 
 -- | Base HTML template
@@ -83,3 +90,33 @@ urlMetadata info = template "URL Information" $ do
             strong_ "Go to URL: "
             let goUrl = T.pack $ "/go/" <> shortCode info
             a_ [href_ goUrl] $ toHtml $ T.unpack goUrl 
+
+-- | Homepage with list of URLs
+homePage :: [UrlInfo] -> Html ()
+homePage urls = template "URL Shortener" $ do
+    h1_ "URL Shortener"
+    a_ [class_ "create-new", href_ "/new"] "Create New Shortcut"
+    
+    if null urls
+        then p_ "No URLs have been shortened yet."
+        else ul_ [class_ "url-list"] $ do
+            F.for_ urls $ \info -> li_ [class_ "url-item"] $ do
+                div_ $ do
+                    "Original: "
+                    a_ [href_ $ T.pack $ originalUrl info] $ 
+                        toHtml $ truncateUrl $ originalUrl info
+                div_ $ do
+                    "Shortcut: "
+                    let shortUrl = T.pack $ "/go/" <> shortCode info
+                    a_ [href_ shortUrl] $ toHtml $ T.unpack shortUrl
+                div_ [class_ "url-stats"] $ do
+                    a_ [href_ $ T.pack $ "/get/" <> shortCode info] $ do
+                        toHtml $ show $ clicks info
+                        " clicks • Created "
+                        toHtml $ show $ createdAt info
+
+-- | Helper to truncate long URLs for display
+truncateUrl :: String -> String
+truncateUrl url
+    | length url <= 50 = url
+    | otherwise = take 47 url <> "..." 
