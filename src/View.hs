@@ -18,7 +18,12 @@ import qualified Data.Foldable as F
 -- | CSS styles for the application
 pageStyle :: T.Text
 pageStyle = mconcat
-    [ "body { font-family: Arial, sans-serif; max-width: 800px; margin: 2em auto; padding: 0 1em; }"
+    [ "body { font-family: Arial, sans-serif; margin: 0; padding: 0; }"
+    , "main { max-width: 800px; margin: 0 auto; padding: 2em 1em; }"
+    , "header { background: #f8f9fa; border-bottom: 1px solid #e9ecef; padding: 1em; margin-bottom: 2em; }"
+    , "nav { max-width: 800px; margin: 0 auto; display: flex; gap: 1em; align-items: center; }"
+    , ".nav-brand { font-size: 1.25em; font-weight: bold; color: #333; text-decoration: none; margin-right: auto; }"
+    , ".nav-brand:hover { text-decoration: none; color: #000; }"
     , "form { display: flex; gap: 1em; margin: 2em 0; }"
     , "input[type=url] { flex-grow: 1; padding: 0.5em; }"
     , "input[type=submit] { padding: 0.5em 1em; cursor: pointer; }"
@@ -27,9 +32,15 @@ pageStyle = mconcat
     , ".url-list { list-style: none; padding: 0; }"
     , ".url-item { border-bottom: 1px solid #eee; padding: 1em 0; }"
     , ".url-stats { color: #666; font-size: 0.9em; margin-top: 0.5em; }"
-    , ".create-new { display: inline-block; margin: 1em 0; padding: 0.5em 1em; background: #0066cc; color: white; border-radius: 4px; }"
-    , ".create-new:hover { background: #0052a3; text-decoration: none; }"
+    , ".btn { display: inline-block; padding: 0.5em 1em; background: #0066cc; color: white; border-radius: 4px; }"
+    , ".btn:hover { background: #0052a3; text-decoration: none; }"
     ]
+
+-- | Navigation header
+navHeader :: Html ()
+navHeader = header_ [] $ nav_ [] $ do
+    a_ [class_ "nav-brand", href_ "/"] "URL Shortener"
+    a_ [class_ "btn", href_ "/new"] "Create New"
 
 -- | Base HTML template
 template :: T.Text -> Html () -> Html ()
@@ -37,7 +48,9 @@ template title' content = doctypehtml_ $ do
     head_ $ do
         title_ (toHtml title')
         style_ pageStyle
-    body_ content
+    body_ $ do
+        navHeader
+        main_ content
 
 -- | Form for creating new shortcuts
 newUrlForm :: Html ()
@@ -89,13 +102,12 @@ urlMetadata info = template "URL Information" $ do
         p_ $ do
             strong_ "Go to URL: "
             let goUrl = T.pack $ "/go/" <> shortCode info
-            a_ [href_ goUrl] $ toHtml $ T.unpack goUrl 
+            a_ [href_ goUrl] $ toHtml $ T.unpack goUrl
 
 -- | Homepage with list of URLs
 homePage :: [UrlInfo] -> Html ()
 homePage urls = template "URL Shortener" $ do
-    h1_ "URL Shortener"
-    a_ [class_ "create-new", href_ "/new"] "Create New Shortcut"
+    h1_ "Recent URLs"
     
     if null urls
         then p_ "No URLs have been shortened yet."
