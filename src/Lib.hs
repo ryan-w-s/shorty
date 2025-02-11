@@ -6,6 +6,7 @@ module Lib
     , createUrl
     , getUrlById
     , getAllUrls
+    , incrementClicks
     , UrlInfo(..)
     -- * Base62 Conversion
     , toBase62

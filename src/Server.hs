@@ -10,7 +10,7 @@ import Data.Text.Lazy (Text)
 import qualified Data.Text.Lazy as TL
 import Control.Exception (try, SomeException)
 import Lucid (renderText)
-import Lib (createUrl, getUrlById, fromBase62, UrlInfo(..))
+import Lib (createUrl, getUrlById, fromBase62, incrementClicks, UrlInfo(..))
 import View (newUrlForm, errorPage, shortcutCreated, urlMetadata)
 
 -- | Application routes
@@ -55,7 +55,7 @@ routes = do
             Nothing -> 
                 html $ renderText $ errorPage "Invalid shortcode format"
             Just shortUrlId -> do
-                maybeUrl <- liftAndCatchIO $ getUrlById shortUrlId
+                maybeUrl <- liftAndCatchIO $ incrementClicks shortUrlId
                 case maybeUrl of
                     Nothing ->
                         html $ renderText $ errorPage "Shortcode not found"

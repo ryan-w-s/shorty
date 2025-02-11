@@ -6,6 +6,7 @@ module Actions
       createUrl
     , getUrlById
     , getAllUrls
+    , incrementClicks
     , UrlInfo(..)
     -- * Base62 Conversion
     , toBase62
@@ -63,6 +64,24 @@ getAllUrls :: IO [UrlInfo]
 getAllUrls = do
     entities <- runDB $ selectList [] [Desc UrlCreatedAt]
     pure $ map toUrlInfo entities
+
+-- | Increment the click count for a URL and return the updated info
+incrementClicks :: Integer -> IO (Maybe UrlInfo)
+incrementClicks n = do
+    let key = toSqlKey (fromIntegral n) :: Key Url
+    result <- runDB $ do
+        -- Get the current URL
+        maybeUrl <- get key
+        case maybeUrl of
+            Nothing -> pure Nothing
+            Just url -> do
+                -- Update the click count
+                let newClicks = urlClicks url + 1
+                update key [UrlClicks =. newClicks]
+                -- Get the updated URL
+                updatedUrl <- get key
+                pure $ fmap (toUrlInfo . Entity key) updatedUrl
+    pure result
 
 -- Base62 conversion helpers
 base62Chars :: String
