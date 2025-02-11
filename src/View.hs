@@ -39,7 +39,7 @@ pageStyle = mconcat
 -- | Navigation header
 navHeader :: Html ()
 navHeader = header_ [] $ nav_ [] $ do
-    a_ [class_ "nav-brand", href_ "/"] "URL Shortener"
+    a_ [class_ "nav-brand", href_ "/"] "Shorty"
     a_ [class_ "btn", href_ "/new"] "Create New"
 
 -- | Base HTML template
@@ -106,7 +106,7 @@ urlMetadata info = template "URL Information" $ do
 
 -- | Homepage with list of URLs
 homePage :: [UrlInfo] -> Html ()
-homePage urls = template "URL Shortener" $ do
+homePage urls = template "Shorty" $ do
     h1_ "Recent URLs"
     
     if null urls
